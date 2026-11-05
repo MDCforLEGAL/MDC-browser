@@ -48,7 +48,14 @@
       </div>
     </div>
 
-    <div class="quick-links" id="quickLinks"></div>
+    <!-- Shortcuts Section -->
+    <div class="shortcuts-section">
+      <div class="shortcuts-grid" id="shortcutsGrid"></div>
+      <button id="addShortcutBtn" class="add-shortcut-btn">
+        <span class="plus-icon">+</span>
+        <span>Add shortcut</span>
+      </button>
+    </div>
   </main>
 
   <!-- History Modal -->
@@ -88,7 +95,7 @@
         <div class="menu-divider"></div>
         <div class="about">
           <strong>MDC</strong> — Modern Discovery Center<br>
-          <small>Optimized for Samsung Internet</small>
+          <small>Optimized for Samsung Internet • One UI</small>
         </div>
       </div>
     </div>
@@ -130,10 +137,41 @@
           </select>
         </label>
         <label class="setting-item">
-          <span>Show Quick Links</span>
-          <input type="checkbox" id="showQuickLinks" checked>
+          <span>One UI Version</span>
+          <select id="oneUiVersion">
+            <option value="6">One UI 6 / earlier</option>
+            <option value="7">One UI 7</option>
+            <option value="8">One UI 8 / 8.5</option>
+            <option value="9">One UI 9</option>
+          </select>
+        </label>
+        <label class="setting-item">
+          <span>Samsung Internet Style</span>
+          <select id="browserStyle">
+            <option value="standard">Standard</option>
+            <option value="glassy">Glassy / Frosted (newer)</option>
+            <option value="compact">Compact</option>
+          </select>
         </label>
         <button id="resetSettingsBtn" class="action-btn secondary">Reset All Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Shortcut Modal -->
+  <div id="addShortcutModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Shortcut</h2>
+        <button class="close-btn" data-modal="addShortcutModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="add-bookmark">
+          <input type="text" id="shortcutTitle" placeholder="Title (e.g. YouTube)">
+          <input type="url" id="shortcutUrl" placeholder="https://youtube.com">
+          <input type="text" id="shortcutIcon" placeholder="Emoji icon (optional, e.g. ▶️)" maxlength="2">
+          <button id="saveShortcutBtn" class="action-btn">Add Shortcut</button>
+        </div>
       </div>
     </div>
   </div>
