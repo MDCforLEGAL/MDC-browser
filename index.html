@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#1a1a1a">
+  <title>MDC</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>M</text></svg>">
+</head>
+<body>
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="logo">MDC</div>
+    <div class="top-actions">
+      <button id="historyBtn" class="icon-btn" aria-label="History" title="History">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+        </svg>
+      </button>
+      <button id="menuBtn" class="icon-btn" aria-label="Menu" title="Menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+          <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Search Area -->
+  <main class="main-content">
+    <div class="search-section">
+      <div class="search-box">
+        <div class="engine-selector">
+          <select id="engineSelect" aria-label="Search Engine">
+            <option value="google">Google</option>
+            <option value="yandex">Yandex</option>
+            <option value="bing">Bing</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+          </select>
+          <span class="select-arrow">▼</span>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search the web..." autocomplete="off" spellcheck="false">
+        <button id="searchBtn" class="search-btn" aria-label="Search">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="quick-links" id="quickLinks"></div>
+  </main>
+
+  <!-- History Modal -->
+  <div id="historyModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Recent Searches</h2>
+        <button class="close-btn" data-modal="historyModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul id="historyList" class="history-list"></ul>
+        <button id="clearHistoryBtn" class="action-btn secondary">Clear History</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Modal -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content menu-modal">
+      <div class="modal-header">
+        <h2>Menu</h2>
+        <button class="close-btn" data-modal="menuModal">&times;</button>
+      </div>
+      <div class="modal-body menu-body">
+        <button id="themeToggle" class="menu-item">
+          <span class="menu-icon">🌙</span>
+          <span>Toggle Theme</span>
+        </button>
+        <button id="bookmarksBtn" class="menu-item">
+          <span class="menu-icon">🔖</span>
+          <span>Bookmarks</span>
+        </button>
+        <button id="settingsBtn" class="menu-item">
+          <span class="menu-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+        <div class="menu-divider"></div>
+        <div class="about">
+          <strong>MDC</strong> — Modern Discovery Center<br>
+          <small>Optimized for Samsung Internet</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bookmarks Modal -->
+  <div id="bookmarksModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Bookmarks</h2>
+        <button class="close-btn" data-modal="bookmarksModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="add-bookmark">
+          <input type="text" id="bookmarkTitle" placeholder="Title">
+          <input type="url" id="bookmarkUrl" placeholder="https://example.com">
+          <button id="addBookmarkBtn" class="action-btn">Add</button>
+        </div>
+        <ul id="bookmarksList" class="bookmarks-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-btn" data-modal="settingsModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label class="setting-item">
+          <span>Default Search Engine</span>
+          <select id="defaultEngine">
+            <option value="google">Google</option>
+            <option value="yandex">Yandex</option>
+            <option value="bing">Bing</option>
+            <option value="duckduckgo">DuckDuckGo</option>
+          </select>
+        </label>
+        <label class="setting-item">
+          <span>Show Quick Links</span>
+          <input type="checkbox" id="showQuickLinks" checked>
+        </label>
+        <button id="resetSettingsBtn" class="action-btn secondary">Reset All Data</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
