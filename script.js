@@ -1,4 +1,4 @@
-// MDC Homepage - Samsung Internet Optimized
+// MDC Homepage - Samsung Internet Optimized with One UI versions
 document.addEventListener('DOMContentLoaded', () => {
   // Elements
   const searchInput = document.getElementById('searchInput');
@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuModal = document.getElementById('menuModal');
   const bookmarksModal = document.getElementById('bookmarksModal');
   const settingsModal = document.getElementById('settingsModal');
+  const addShortcutModal = document.getElementById('addShortcutModal');
   const historyList = document.getElementById('historyList');
   const clearHistoryBtn = document.getElementById('clearHistoryBtn');
   const themeToggle = document.getElementById('themeToggle');
@@ -20,9 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const bookmarkTitle = document.getElementById('bookmarkTitle');
   const bookmarkUrl = document.getElementById('bookmarkUrl');
   const defaultEngine = document.getElementById('defaultEngine');
-  const showQuickLinks = document.getElementById('showQuickLinks');
+  const oneUiVersion = document.getElementById('oneUiVersion');
+  const browserStyle = document.getElementById('browserStyle');
   const resetSettingsBtn = document.getElementById('resetSettingsBtn');
-  const quickLinksContainer = document.getElementById('quickLinks');
+  const shortcutsGrid = document.getElementById('shortcutsGrid');
+  const addShortcutBtn = document.getElementById('addShortcutBtn');
+  const shortcutTitle = document.getElementById('shortcutTitle');
+  const shortcutUrl = document.getElementById('shortcutUrl');
+  const shortcutIcon = document.getElementById('shortcutIcon');
+  const saveShortcutBtn = document.getElementById('saveShortcutBtn');
 
   // Search engines
   const engines = {
@@ -32,18 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=' }
   };
 
-  // Default quick links
-  const defaultQuickLinks = [
-    { title: 'YouTube', url: 'https://youtube.com', icon: '▶️' },
-    { title: 'Wikipedia', url: 'https://wikipedia.org', icon: '📚' },
-    { title: 'GitHub', url: 'https://github.com', icon: '🐙' },
-    { title: 'Reddit', url: 'https://reddit.com', icon: '🔴' }
-  ];
-
   // Storage keys
   const KEYS = {
     history: 'mdc_history',
     bookmarks: 'mdc_bookmarks',
+    shortcuts: 'mdc_shortcuts',
     settings: 'mdc_settings',
     theme: 'mdc_theme'
   };
@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load data
   let history = JSON.parse(localStorage.getItem(KEYS.history) || '[]');
   let bookmarks = JSON.parse(localStorage.getItem(KEYS.bookmarks) || '[]');
-  let settings = JSON.parse(localStorage.getItem(KEYS.settings) || '{"engine":"google","showQuick":true}');
+  let shortcuts = JSON.parse(localStorage.getItem(KEYS.shortcuts) || '[]');
+  let settings = JSON.parse(localStorage.getItem(KEYS.settings) || '{"engine":"google","oneui":"7","browser":"standard"}');
   let theme = localStorage.getItem(KEYS.theme) || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 
   // Apply theme
@@ -62,14 +63,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   applyTheme(theme);
 
-  // Apply settings
-  function applySettings() {
+  // Apply One UI and browser style
+  function applyAppearance() {
+    document.documentElement.setAttribute('data-oneui', settings.oneui || '7');
+    document.documentElement.setAttribute('data-browser', settings.browser || 'standard');
+    oneUiVersion.value = settings.oneui || '7';
+    browserStyle.value = settings.browser || 'standard';
     engineSelect.value = settings.engine || 'google';
     defaultEngine.value = settings.engine || 'google';
-    showQuickLinks.checked = settings.showQuick !== false;
-    renderQuickLinks();
   }
-  applySettings();
+  applyAppearance();
 
   // Render history
   function renderHistory() {
@@ -129,38 +132,36 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Render quick links
-  function renderQuickLinks() {
-    quickLinksContainer.innerHTML = '';
-    if (!settings.showQuick) {
-      quickLinksContainer.style.display = 'none';
-      return;
-    }
-    quickLinksContainer.style.display = 'grid';
-    defaultQuickLinks.forEach(link => {
+  // Render shortcuts
+  function renderShortcuts() {
+    shortcutsGrid.innerHTML = '';
+    shortcuts.forEach((sc, index) => {
       const a = document.createElement('a');
-      a.href = link.url;
-      a.className = 'quick-link';
+      a.href = sc.url;
+      a.className = 'shortcut';
       a.target = '_blank';
       a.rel = 'noopener';
       a.innerHTML = `
-        <div class="quick-link-icon">${link.icon}</div>
-        <div class="quick-link-label">${link.title}</div>
+        <div class="shortcut-icon">${sc.icon || '🔗'}</div>
+        <div class="shortcut-label">${escapeHtml(sc.title)}</div>
+        <button class="shortcut-delete" data-index="${index}">×</button>
       `;
-      quickLinksContainer.appendChild(a);
+      a.querySelector('.shortcut-delete').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        shortcuts.splice(index, 1);
+        saveShortcuts();
+        renderShortcuts();
+      });
+      shortcutsGrid.appendChild(a);
     });
   }
 
   // Save functions
-  function saveHistory() {
-    localStorage.setItem(KEYS.history, JSON.stringify(history));
-  }
-  function saveBookmarks() {
-    localStorage.setItem(KEYS.bookmarks, JSON.stringify(bookmarks));
-  }
-  function saveSettings() {
-    localStorage.setItem(KEYS.settings, JSON.stringify(settings));
-  }
+  function saveHistory() { localStorage.setItem(KEYS.history, JSON.stringify(history)); }
+  function saveBookmarks() { localStorage.setItem(KEYS.bookmarks, JSON.stringify(bookmarks)); }
+  function saveShortcuts() { localStorage.setItem(KEYS.shortcuts, JSON.stringify(shortcuts)); }
+  function saveSettings() { localStorage.setItem(KEYS.settings, JSON.stringify(settings)); }
 
   // Perform search
   function performSearch() {
@@ -171,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const engine = engines[engineId];
     const url = engine.url + encodeURIComponent(query);
 
-    // Save to history
     history.unshift({
       query,
       engine: engine.name,
@@ -223,6 +223,22 @@ document.addEventListener('DOMContentLoaded', () => {
     openModal(settingsModal);
   });
 
+  addShortcutBtn.addEventListener('click', () => openModal(addShortcutModal));
+
+  saveShortcutBtn.addEventListener('click', () => {
+    const title = shortcutTitle.value.trim();
+    const url = shortcutUrl.value.trim();
+    const icon = shortcutIcon.value.trim();
+    if (!title || !url) return;
+    shortcuts.push({ title, url, icon });
+    saveShortcuts();
+    shortcutTitle.value = '';
+    shortcutUrl.value = '';
+    shortcutIcon.value = '';
+    closeModal(addShortcutModal);
+    renderShortcuts();
+  });
+
   addBookmarkBtn.addEventListener('click', () => {
     const title = bookmarkTitle.value.trim();
     const url = bookmarkUrl.value.trim();
@@ -248,16 +264,23 @@ document.addEventListener('DOMContentLoaded', () => {
     saveSettings();
   });
 
-  showQuickLinks.addEventListener('change', () => {
-    settings.showQuick = showQuickLinks.checked;
+  oneUiVersion.addEventListener('change', () => {
+    settings.oneui = oneUiVersion.value;
     saveSettings();
-    renderQuickLinks();
+    applyAppearance();
+  });
+
+  browserStyle.addEventListener('change', () => {
+    settings.browser = browserStyle.value;
+    saveSettings();
+    applyAppearance();
   });
 
   resetSettingsBtn.addEventListener('click', () => {
-    if (confirm('Reset all data? This will clear history, bookmarks, and settings.')) {
+    if (confirm('Reset all data? This will clear history, bookmarks, shortcuts, and settings.')) {
       localStorage.removeItem(KEYS.history);
       localStorage.removeItem(KEYS.bookmarks);
+      localStorage.removeItem(KEYS.shortcuts);
       localStorage.removeItem(KEYS.settings);
       localStorage.removeItem(KEYS.theme);
       location.reload();
@@ -278,7 +301,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Escape key to close
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal.active').forEach(closeModal);
@@ -293,5 +315,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Initial render
-  renderQuickLinks();
+  renderShortcuts();
 });
