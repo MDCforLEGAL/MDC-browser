@@ -336,23 +336,74 @@ body {
   font-weight: 300;
 }
 
-/* Modals */
+button svg,
+.icon-btn svg,
+.search-btn svg {
+  pointer-events: none;
+}
+
+button,
+.icon-btn,
+.search-btn,
+.add-shortcut-btn,
+.menu-item,
+.action-btn,
+.close-btn,
+select {
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.top-bar,
+.main-content,
+.search-section,
+.shortcuts-section {
+  position: relative;
+  z-index: 10;
+}
+
+/* Aggressive closed-modal isolation for Samsung Internet.
+   display:none alone is not always enough when backdrop-filter creates a compositor layer. */
 .modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 1000;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 16px;
-  animation: fadeIn 0.2s ease;
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  z-index: -9999 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
 }
 
 .modal.active {
-  display: flex;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+  left: 0 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+  z-index: 1000 !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px !important;
+  animation: fadeIn 0.2s ease;
 }
 
 @keyframes fadeIn {
@@ -593,10 +644,10 @@ body {
 
 /* Responsive */
 @media (min-width: 600px) {
-  .modal {
+  .modal.active {
     align-items: center;
   }
-  .modal-content {
+  .modal.active .modal-content {
     border-radius: var(--radius);
   }
 }
